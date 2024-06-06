@@ -1,0 +1,72 @@
+{% extends 'base_generic.html' %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h2>Edit Profile</h2>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <div class="profile-image">
+        {% if user.profile.image %}
+          <img src="{{ user.profile.image.url }}" alt="{{ user.username }}">
+        {% endif %}
+      </div>
+
+      <div class="form-field">
+        <label for="id_username">Username:</label>
+        <input type="text" name="username" id="id_username" value="{{ user.username }}" placeholder="Имя пользователя">
+        {% if form.username.errors %}
+          <div class="errorlist">{{ form.username.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-field">
+        <label for="id_image">Profile Picture:</label>
+        <input type="file" name="image" id="id_image">
+        {% if form.image.errors %}
+          <div class="errorlist">{{ form.image.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-field">
+        <label for="id_phone_number">Phone Number:</label>
+        <input type="text" name="phone_number" id="id_phone_number" value="{{ user.phone_number }}" placeholder="Номер телефона">
+        {% if form.phone_number.errors %}
+          <div class="errorlist">{{ form.phone_number.errors }}</div>
+        {% endif %}
+      </div>
+
+      <div class="form-field">
+        <label for="id_birth_date">Birth Date:</label>
+        <input type="date" name="birth_date" id="id_birth_date" value="{{ user.profile.birth_date|date:'Y-m-d' }}" placeholder="Дата рождения">
+        {% if form.birth_date.errors %}
+          <div class="errorlist">{{ form.birth_date.errors }}</div>
+        {% endif %}
+      </div>
+      <div class="form-field">
+        <label for="id_country">Country:</label>
+        <select name="country" id="id_country">
+            {% for country in countries %}
+                <option value="{{ country.id }}" {% if country.id == user.profile.country.id %}selected{% endif %}>{{ country.name }}</option>
+            {% endfor %}
+        </select>
+        {% if form.country.errors %}
+            <div class="errorlist">{{ form.country.errors }}</div>
+        {% endif %}
+    </div>
+    
+
+      <div class="form-field">
+        <label for="id_bio">About Me:</label>
+        <textarea name="bio" id="id_bio" placeholder="О себе">{{ user.profile.bio }}</textarea>
+        {% if form.bio.errors %}
+          <div class="errorlist">{{ form.bio.errors }}</div>
+        {% endif %}
+      </div>
+
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+{% endblock %}

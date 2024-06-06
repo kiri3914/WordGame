@@ -1,0 +1,175 @@
+/* Typography & Colors */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Modern font stack */
+    background: linear-gradient(135deg, #43e97b, #eeff57); /* Vibrant gradient */
+    color: #222; /* Darker text for contrast */
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+/* Header */
+header {
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center; /* Center header text */
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.5em;
+    color: #31e42b; /* Match gradient color */
+}
+
+/* Navigation */
+nav ul {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+    margin-top: 20px;
+}
+
+nav li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #43e97b; /* Match gradient color */
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+nav a:hover {
+    color: #222; /* Darken on hover */
+}
+
+/* Main Content (Form) */
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px; /* Add some padding */
+}
+
+.container {
+    background: #fff;
+    padding: 40px;
+    border-radius: 15px; /* Softer corners */
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 500px; /* Limit container width */
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #43e97b; /* Match gradient color */
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+form label {
+    margin-bottom: 8px;
+}
+
+form input, form select, form textarea, form button {
+    padding: 15px;
+    margin: 8px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+}
+
+form button {
+    background: #43e97b;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+form button:hover {
+    background: #34d362; /* Darken on hover */
+}
+
+.errorlist {
+    color: #ff3333; /* Red for errors */
+    margin: 8px 0 0;
+}
+
+/* Profile Image */
+.profile-image {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.profile-image img {
+    border-radius: 50%;
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column; /* Stack label and input vertically */
+}
+
+.form-field label {
+    margin-bottom: 5px; /* Add space between label and input */
+}
+
+.form-field input, .form-field select, .form-field textarea {
+    padding: 10px;
+    width: 100%; 
+    box-sizing: border-box; 
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 20px;
+    background: #fff;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    nav li {
+        display: block;
+        margin: 10px 0;
+    }
+
+    .container {
+        width: 95%;
+    }
+}
+
+form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px; /* Adjust the gap as needed */
+}
+
+.form-field {
+    display: flex;
+    flex-direction: column; /* Stack label and input vertically */
+}
+
+.form-field label {
+    margin-bottom: 5px; /* Add space between label and input */
+}
+
+.form-field input, .form-field select, .form-field textarea {
+    padding: 10px;
+    width: 100%; 
+    box-sizing: border-box; 
+}

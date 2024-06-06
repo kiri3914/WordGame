@@ -1,0 +1,14 @@
+<!-- templates/wordgame/game_lose.html -->
+
+{% extends "base_generic.html" %}
+
+{% block title %}You Lose{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Вы потратили все попытки. Загаданное "{{ word }}".</h2>
+    <form action="{% url 'game_home' %}">
+        <button type="submit">Начать заново</button>
+    </form>
+</div>
+{% endblock %}

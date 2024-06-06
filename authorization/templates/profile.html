@@ -1,0 +1,87 @@
+{% extends 'base_generic.html' %}
+
+{% block content %}
+<div class="profile"> 
+    <div class="container">
+        <center>
+            {% if user.profile.image %}
+            <img src="{{ user.profile.image.url }}" alt="" width="150">
+            {% endif %}
+        </center>
+
+            <h3>{{ user.username }} 🏆 {{ user.profile.rating }}</h3>
+            <p> Номер телефона: {{ user.phone_number }} </p>
+            <p> Дата рождения: {{ user.profile.birth_date }} </p>
+            <p> Страна: {{ user.profile.country }} </p>
+            <p> О себе: {{ user.profile.bio }} </p>
+            
+
+            <nav>
+                <a href="{% url 'game_history' %}">История Игр</a>
+            </nav>
+            
+            <form action="{% url 'edit_profile' %}">
+                <button type="submit">Edit Profile</button>
+            </form> 
+    
+    </div>
+    <div class="container">
+        <h2>История Игр</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Время начало</th>
+                    <th>Слово</th>
+                    <th>Попытки</th>
+                    <th>Результат</th>
+                    <th>Время завершения</th>
+                    <th>Детали</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in games %}
+                <tr>
+                    <td>{{ game.created_at }}</td>
+                    <td>{{ game.word.word }}</td>
+                    <td>{{ game.attempt_set.count }}</td>
+                    <td>{{ game.completed_at }}</td>
+                    <td>{% if game.win %}Победа{% else %}Поражение{% endif %}</td>
+                    <td><a href="{% url 'game_detail' game.id %}">Подробнее</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <style>
+    .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        width: 80%;
+        max-width: 100%;
+        text-align: center;
+        margin-top: 50px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    
+    th, td {
+        padding: 10px;
+        border: 1px solid #ccc;
+        text-align: left;
+    }
+    
+    th {
+        background-color: #f4f4f4;
+    }
+    
+    </style>
+</div>
+
+{% endblock %}

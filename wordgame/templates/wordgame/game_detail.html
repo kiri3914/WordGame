@@ -1,0 +1,76 @@
+<!-- templates/wordgame/game_detail.html -->
+
+{% extends "base_generic.html" %}
+
+{% block title %}Детали Игры{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Детали Игры</h2>
+    <p>Слово: {{ game.word.word }}</p>
+    <p>Дата начала: {{ game.created_at }}</p>
+    <p>Дата завершения: {{ game.completed_at }}</p>
+    <h3>Попытки</h3>
+        {% for attempt in attempts %}
+        <div class="code-inputs">
+            {{ attempt|safe }}
+        </div>
+    {% endfor %}
+</div>
+
+<style>
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 100%;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.attempt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.code-input {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.code-input.green {
+    background-color: green;
+    color: white;
+}
+
+.code-input.orange {
+    background-color: orange;
+    color: white;
+}
+
+.code-input.gray {
+    background-color: gray;
+    color: white;
+}
+
+.code-input:last-child {
+    margin-right: 0;
+}
+
+span {
+    margin-left: 10px;
+    font-size: 14px;
+    color: #666;
+}
+</style>
+
+{% endblock %}

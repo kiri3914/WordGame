@@ -1,0 +1,14 @@
+<!-- templates/wordgame/game_win.html -->
+
+{% extends "base_generic.html" %}
+
+{% block title %}You Win{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Поздравляем! Вы угодали слово!</h2>
+    <form action="{% url 'game_home' %}">
+        <button type="submit">Начать заново</button>
+    </form>
+</div>
+{% endblock %}

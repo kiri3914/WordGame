@@ -1,0 +1,64 @@
+<!-- templates/wordgame/game_history.html -->
+
+{% extends "base_generic.html" %}
+
+{% block title %}Game History{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>История Игр</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Время начало</th>
+                <th>Слово</th>
+                <th>Попытки</th>
+                <th>Результат</th>
+                <th>Время завершения</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for game in games %}
+            <tr>
+                <td>{{ game.created_at }}</td>
+                <td>{{ game.word.word }}</td>
+                <td>{{ game.attempt_set.count }}</td>
+                <td>{{ game.completed_at }}</td>
+                <td>{% if game.win %}Победа{% else %}Поражение{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 100%;
+    text-align: center;
+    margin-top: 50px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+</style>
+
+{% endblock %}

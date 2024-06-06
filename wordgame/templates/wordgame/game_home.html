@@ -1,0 +1,162 @@
+<!-- templates/wordgame/game_home.html -->
+
+{% extends "base_generic.html" %}
+
+{% block title %}Guess the Word{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>Угодайте слово</h2>
+    <p>У вас осталось {{ attempts }} попыток </p>
+    <form method="post">
+        {% csrf_token %}
+        <div class="code-inputs">
+            <input type="text" name="guessed_word1" id="code1" maxlength="1" class="code-input" required>
+            <input type="text" name="guessed_word2" id="code2" maxlength="1" class="code-input" required>
+            <input type="text" name="guessed_word3" id="code3" maxlength="1" class="code-input" required>
+            <input type="text" name="guessed_word4" id="code4" maxlength="1" class="code-input" required>
+            <input type="text" name="guessed_word5" id="code5" maxlength="1" class="code-input" required>
+        </div>
+        <input type="hidden" name="guessed_word" id="guessed_word">
+        <button type="submit">Проверить</button>
+    </form>
+    
+
+    {% if previous_attempts %} <h3>Предыдущие попытки</h3>{% endif %}
+    
+    {% for attempt in previous_attempts %}
+        <div class="code-inputs">
+            {{ attempt|safe }}
+        </div>
+    {% endfor %}
+</div>
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const codeInputs = document.querySelectorAll(".code-input");
+    const hiddenGuessedWordInput = document.getElementById("guessed_word");
+
+    // Ограничиваем коллекцию только первыми пятью инпутами
+    const firstFiveInputs = Array.from(codeInputs).slice(0, 5);
+
+    firstFiveInputs.forEach((input, index) => {
+        input.addEventListener("input", () => {
+            if (input.value.length === 1 && index < firstFiveInputs.length - 1) {
+                firstFiveInputs[index + 1].focus();
+            }
+            updateHiddenGuessedWordInput();
+        });
+
+        input.addEventListener("keydown", (event) => {
+            if (event.key === "Backspace" && input.value.length === 0 && index > 0) {
+                firstFiveInputs[index - 1].focus();
+            }
+        });
+    });
+
+    function updateHiddenGuessedWordInput() {
+        let guessedWordValue = "";
+        firstFiveInputs.forEach(input => {
+            guessedWordValue += input.value;
+        });
+        hiddenGuessedWordInput.value = guessedWordValue;
+    }
+});
+
+$(document).ready(function() {
+    $('form').submit(function(event) {
+        // Предотвращаем стандартное поведение отправки формы
+        event.preventDefault();
+
+        // Получаем данные формы
+        var formData = $(this).serialize();
+
+        // Отправляем AJAX-запрос
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: formData,
+            success: function(response) {
+                // Здесь можно обработать успешный ответ от сервера
+                console.log(response);
+                // Например, обновить содержимое страницы или показать сообщение об успешной отправке
+            },
+            error: function(xhr, status, error) {
+                // Здесь можно обработать ошибку при отправке запроса
+                console.error(xhr.responseText);
+            }
+        });
+    });
+});
+
+
+</script>
+
+<style>
+/* Добавим стили для центрирования и красивого отображения */
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 500px;
+    max-width: 100%;
+    text-align: center;
+    margin-top: 50px;
+}
+
+.code-inputs {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.code-input {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 5px;
+}
+
+.code-input:last-child {
+    margin-right: 0;
+}
+
+form button {
+    background-color: #6a11cb;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+form button:hover {
+    background-color: #2575fc;
+}
+
+h4 {
+    color: #ff3d3d;
+}
+.green {
+    color: rgb(0, 193, 0);
+}
+
+.orange {
+    color: rgb(255, 188, 62);
+}
+
+.gray {
+    color: gray;
+}
+
+</style>
+
+
+{% endblock %}

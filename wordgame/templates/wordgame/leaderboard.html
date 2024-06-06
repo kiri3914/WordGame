@@ -1,0 +1,60 @@
+<!-- templates/wordgame/game_history.html -->
+
+{% extends "base_generic.html" %}
+
+{% block title %}Game History{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2>История Игр</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Имя</th>
+                <th>Рейтинг 🏆</th>
+                <th>Страна</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in top_players %}
+            <tr>
+                <td>{{ player.user.username }}</td>
+                <td>{{ player.rating }} 🏆</td>
+                <td>{{ player.country }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<style>
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    width: 80%;
+    max-width: 100%;
+    text-align: center;
+    margin-top: 50px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+</style>
+
+{% endblock %}
