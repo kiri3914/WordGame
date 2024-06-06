@@ -6,7 +6,7 @@
 
 {% block content %}
 <div class="container">
-    <h2>Угодайте слово</h2>
+    <h2>Угадайте слово</h2>
     <p>У вас осталось {{ attempts }} попыток </p>
     <form method="post">
         {% csrf_token %}
@@ -19,6 +19,14 @@
         </div>
         <input type="hidden" name="guessed_word" id="guessed_word">
         <button type="submit">Проверить</button>
+
+ {% if attempts <= 5 %}
+<button type="button" id="hint-button">Получить подсказку ✨</button>
+{% endif %}
+
+<div id="hint-box" style="display:none;">
+    <p>Подсказка: Буква <span id="hint-letter"></span> находится на позиции <span id="hint-position"></span></p>
+</div>
     </form>
     
 
@@ -29,68 +37,101 @@
             {{ attempt|safe }}
         </div>
     {% endfor %}
+
 </div>
 
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    const codeInputs = document.querySelectorAll(".code-input");
-    const hiddenGuessedWordInput = document.getElementById("guessed_word");
-
-    // Ограничиваем коллекцию только первыми пятью инпутами
-    const firstFiveInputs = Array.from(codeInputs).slice(0, 5);
-
-    firstFiveInputs.forEach((input, index) => {
-        input.addEventListener("input", () => {
-            if (input.value.length === 1 && index < firstFiveInputs.length - 1) {
-                firstFiveInputs[index + 1].focus();
-            }
-            updateHiddenGuessedWordInput();
+    document.addEventListener("DOMContentLoaded", function() {
+        const codeInputs = document.querySelectorAll(".code-input");
+        const hiddenGuessedWordInput = document.getElementById("guessed_word");
+    
+        // Ограничиваем коллекцию только первыми пятью инпутами
+        const firstFiveInputs = Array.from(codeInputs).slice(0, 5);
+    
+        firstFiveInputs.forEach((input, index) => {
+            input.addEventListener("input", () => {
+                if (input.value.length === 1 && index < firstFiveInputs.length - 1) {
+                    firstFiveInputs[index + 1].focus();
+                }
+                updateHiddenGuessedWordInput();
+            });
+    
+            input.addEventListener("keydown", (event) => {
+                if (event.key === "Backspace" && input.value.length === 0 && index > 0) {
+                    firstFiveInputs[index - 1].focus();
+                }
+            });
         });
+    
+        function updateHiddenGuessedWordInput() {
+            let guessedWordValue = "";
+            firstFiveInputs.forEach(input => {
+                guessedWordValue += input.value;
+            });
+            hiddenGuessedWordInput.value = guessedWordValue;
+        }
+    
+        // Логика подсказки
+        const hintButton = document.getElementById("hint-button");
+    const hintBox = document.getElementById("hint-box");
+    const hintLetter = document.getElementById("hint-letter");
+    const hintPosition = document.getElementById("hint-position");
 
-        input.addEventListener("keydown", (event) => {
-            if (event.key === "Backspace" && input.value.length === 0 && index > 0) {
-                firstFiveInputs[index - 1].focus();
-            }
+    if (hintButton) {
+        hintButton.addEventListener("click", function() {
+            fetch("{% url 'get_hint' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({}),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'no_more_hints') {
+                    alert("Вы исчерпали все доступные подсказки.");
+                } else if (data.status !== 'no_hint') {
+                    hintLetter.textContent = data.letter;
+                    hintPosition.textContent = data.index + 1;  // Позиция для пользователя начинается с 1
+                    hintBox.style.display = "block";
+                    }
+                })
+                .catch(error => {
+                    console.error("Ошибка получения подсказки:", error);
+                });
+            });
+        }
+    });
+    
+    
+    
+    $(document).ready(function() {
+        $('form').submit(function(event) {
+            // Предотвращаем стандартное поведение отправки формы
+            event.preventDefault();
+    
+            // Получаем данные формы
+            var formData = $(this).serialize();
+    
+            // Отправляем AJAX-запрос
+            $.ajax({
+                type: 'POST',
+                url: $(this).attr('action'),
+                data: formData,
+                success: function(response) {
+                    // Здесь можно обработать успешный ответ от сервера
+                    console.log(response);
+                    // Например, обновить содержимое страницы или показать сообщение об успешной отправке
+                },
+                error: function(xhr, status, error) {
+                    // Здесь можно обработать ошибку при отправке запроса
+                    console.error(xhr.responseText);
+                }
+            });
         });
     });
-
-    function updateHiddenGuessedWordInput() {
-        let guessedWordValue = "";
-        firstFiveInputs.forEach(input => {
-            guessedWordValue += input.value;
-        });
-        hiddenGuessedWordInput.value = guessedWordValue;
-    }
-});
-
-$(document).ready(function() {
-    $('form').submit(function(event) {
-        // Предотвращаем стандартное поведение отправки формы
-        event.preventDefault();
-
-        // Получаем данные формы
-        var formData = $(this).serialize();
-
-        // Отправляем AJAX-запрос
-        $.ajax({
-            type: 'POST',
-            url: $(this).attr('action'),
-            data: formData,
-            success: function(response) {
-                // Здесь можно обработать успешный ответ от сервера
-                console.log(response);
-                // Например, обновить содержимое страницы или показать сообщение об успешной отправке
-            },
-            error: function(xhr, status, error) {
-                // Здесь можно обработать ошибку при отправке запроса
-                console.error(xhr.responseText);
-            }
-        });
-    });
-});
-
-
 </script>
 
 <style>
