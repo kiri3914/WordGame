@@ -11,4 +11,5 @@ urlpatterns = [
     path('history/', views.game_history, name='game_history'),
     path('history/<int:game_id>/', views.game_detail, name='game_detail'),
     path('leaderboard/', views.leaderboard, name='leaderboard'),
+    path('get_hint/', views.get_hint, name='get_hint')
 ]

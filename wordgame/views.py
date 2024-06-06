@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+from django.http import JsonResponse
+
 
 from authorization.models import Profile
 from .models import Word, Attempt, Game
 from .forms import GuessWordForm
+from random import choice
 
 def initialize_game(request):
     """Инициализация игры, если она еще не начата."""
@@ -12,6 +15,7 @@ def initialize_game(request):
     game = Game.objects.create(user=request.user, word=word)
     request.session['game_id'] = game.id
     request.session['attempts'] = 6
+    request.session['hints'] = 0
     return game
 
 def get_previous_attempts(game):
@@ -38,7 +42,7 @@ def process_post_request(request, form, game, attempts):
         
         attempt = Attempt(game=game, guessed_word=guessed_word, attempts=attempts)
         attempt.save()
-
+        
         if guessed_word.lower() == game.word.word.lower():
             return redirect('game_win')
 
@@ -46,6 +50,35 @@ def process_post_request(request, form, game, attempts):
             return redirect('game_lose')
 
         return redirect('game_home')
+
+
+def get_hint(request):
+    game_id = request.session.get('game_id')
+    if not game_id:
+        return JsonResponse({'status': 'no_game'}, status=400)
+
+    game = get_object_or_404(Game, id=game_id)
+    
+    hints_used = request.session.get('hints', 0)
+    if hints_used >= 1:
+        return JsonResponse({'status': 'no_more_hints'}, status=400)
+    
+    word = game.word.word
+    not_guessed = set(word.lower()) - set(''.join([attempt.guessed_word.lower() for attempt in Attempt.objects.filter(game=game)]))
+    
+    if not not_guessed:
+        return JsonResponse({'status': 'no_hint'}, status=400)
+
+    random_letter = choice(list(not_guessed))
+    letter_index = word.lower().index(random_letter)
+    
+    request.session['hints'] = hints_used + 1
+    request.user.profile.rating -= 2
+    request.user.profile.save()
+    return JsonResponse({'letter': random_letter.upper(), 'index': letter_index})
+    
+    
+
 
 @login_required
 def game_home(request):
@@ -57,6 +90,7 @@ def game_home(request):
     form = GuessWordForm()
     
     previous_attempts = get_previous_attempts(game)
+    
 
     if request.method == 'POST':
         form = GuessWordForm(request.POST)
